@@ -11,6 +11,7 @@ setInterval(drawClock,1000);
 //draw and update clock each second
 function drawClock(){
     drawFace(ctx,radius);
+    drawNumbers(ctx,radius);
     drawTime(ctx,radius);
 }
 //draw the clock face
@@ -18,10 +19,22 @@ function drawFace(ctx,radius){
     //Draw outer circle
     ctx.beginPath();
     ctx.arc(0,0,radius,0,2*Math.PI); //initializes arc
+    ctx.fillStyle = "White";
+    ctx.fill();
     ctx.stroke(); //actually draws the arc
-    drawNumbers(ctx,radius);
+    //gradient
+    var grad = ctx.createRadialGradient(0,0,radius*0.95, 0,0,radius*1.05);
+    grad.addColorStop(0, '#333');
+    grad.addColorStop(0.5, 'white');
+    grad.addColorStop(1, '#333');
+    //define gradient as stroke style
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = radius*0.1;
     //draw center of clock
     ctx.beginPath();
+    ctx.arc(0,0, radius*0.1,0,2*Math.PI);
+    ctx.fillStyle = '#333';
+    ctx.fill();
 }
 //draw the numbers
 function drawNumbers(ctx,radius){
@@ -38,17 +51,17 @@ function drawNumbers(ctx,radius){
             num = i;
         }
         angle = num * Math.PI/6;
-        ctx.rotate(ang);
+        ctx.rotate(angle);
         ctx.translate(0, -radius*0.85);
-        ctx.rotate(-ang);
+        ctx.rotate(-angle);
         ctx.fillText(num.toString(), 0, 0);
-        ctx.rotate(ang);
+        ctx.rotate(angle);
         ctx.translate(0, radius*0.85);
-        ctx.rotate(-ang);
+        ctx.rotate(-angle);
     }
 }
 //draw the current time
-function drawTime(ctx,radius){
+function drawTime(ctx, radius){
     var now = new Date();
     var hour = now.getHours();
     var minute = now.getMinutes();
@@ -70,7 +83,7 @@ function drawTime(ctx,radius){
     //make second hand 90% of canvas's radius
     drawHand(ctx, second, radius*0.9, radius*0.02);
 }
-//draw the hand
+
 function drawHand(ctx, pos, length, width){
     ctx.beginPath();
     ctx.lineWidth = width;
