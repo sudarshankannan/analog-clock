@@ -11,18 +11,73 @@ setInterval(drawClock,1000);
 //draw and update clock each second
 function drawClock(){
     drawFace(ctx,radius);
-    drawNumbers(ctx,radius);
     drawTime(ctx,radius);
 }
 //draw the clock face
 function drawFace(ctx,radius){
-    ctx.arc(radius,radius,radius,0,2*Math.PI);
+    //Draw outer circle
+    ctx.beginPath();
+    ctx.arc(0,0,radius,0,2*Math.PI); //initializes arc
+    ctx.stroke(); //actually draws the arc
+    drawNumbers(ctx,radius);
+    //draw center of clock
+    ctx.beginPath();
 }
 //draw the numbers
-function drawNumbers(cutx,radius){
-
+function drawNumbers(ctx,radius){
+    var angle;
+    var num;
+    ctx.font = radius*0.15 + "px arial"; //set font at 15% of radius
+    ctx.textBaseline = "middle"; //set text alignment to middle
+    ctx.textAlign = "center"; //set text alignment to center
+    for(var i=0; i<=11; i++){
+        if(i==0){ //12 o'clock case
+            num = 12;
+        }
+        else{ //every other number case
+            num = i;
+        }
+        angle = num * Math.PI/6;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius*0.85);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius*0.85);
+        ctx.rotate(-ang);
+    }
 }
 //draw the current time
 function drawTime(ctx,radius){
-    //draw needle
+    var now = new Date();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    //hour
+    hour = hour%12;
+    //calculate angle of hour hand
+    hour = (hour*Math.PI/6)+(minute*Math.PI/(6*60))+(second*Math.PI/(360*60));
+    //make hour hand 50% of canvas's radius
+    drawHand(ctx, hour, radius*0.5, radius*0.07);
+    //minute
+    //calculate angle of minute hand
+    minute=(minute*Math.PI/30)+(second*Math.PI/(30*60));
+    //make minute hand 80% of canvas's radius
+    drawHand(ctx, minute, radius*0.8, radius*0.07);
+    //second
+    //calculate angle of second hand
+    second=(second*Math.PI/30);
+    //make second hand 90% of canvas's radius
+    drawHand(ctx, second, radius*0.9, radius*0.02);
+}
+//draw the hand
+function drawHand(ctx, pos, length, width){
+    ctx.beginPath();
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+    ctx.moveTo(0,0);
+    ctx.rotate(pos);
+    ctx.lineTo(0, -length);
+    ctx.stroke();
+    ctx.rotate(-pos);
 }
